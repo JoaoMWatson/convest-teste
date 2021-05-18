@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS price(
+    id integer PRIMARY KEY,
+    date text NOT NULL UNIQUE,
+    price text NOT NULL
+);
+
+CREATE TABLE IT NOT EXISTS stock(
+    id integer PRIMARY KEY,
+    price_id INTEGER,
+    ticket text NOT NULL UNIQUE,
+    name text UNIQUE,
+    active integer,
+    FOREIGN KEY (price_id) REFERENCES price (id)
+);

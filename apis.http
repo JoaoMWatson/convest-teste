@@ -1,1 +1,0 @@
-GET https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=B3SA3.SAO&apikey=Y77CJJFFT8OTB07V
