@@ -3,7 +3,6 @@ from rich import print
 from datetime import date
 from datetime import timedelta
 from dotenv import load_dotenv
-from typing import Tuple, NewType
 from connection import create_connection
 from alpha_vantage.timeseries import TimeSeries
 

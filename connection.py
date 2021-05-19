@@ -9,38 +9,37 @@ def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by db_file
     :param db_file: database file
-    :return: Cursor object or None
+    :return: Connect object or None
     """
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print('Conexão criada!')
-        cursor = conn.cursor()
+        print('Successfully Connected !')
     except sqlite3.Error as e:
         print('Error in database connection: ', e)
 
-    return cursor
+    return conn
 
 
-def verify_stock(stock: str, date: str) -> str or bool :
+def verify_price_stock(stock: str, date: str) -> bool:
     """Verify if have some register in database
 
     Args:
         stock (str): ticket of the stock
-        date (str): date from stock
+        date (str): date of operation
 
     Returns:
-        str: price value
-        bool: if not have any value
+        bool: True if has a value False if not.
     """
-    cursor: sqlite3.Cursor = create_connection(FILE)
+    conn = create_connection(FILE)
+    cursor: sqlite3.Cursor = conn.cursor()
     try:
         stock_id: int = 1 if 'B3SA3' in stock else 2
         cursor.execute(
             'SELECT * FROM price WHERE id_stock=? AND date=?', (stock_id, date))
         records: list = cursor.fetchone()
         if records:
-            return records[3]
+            return True
         else:
             return False
     except sqlite3.Error as e:
@@ -50,12 +49,27 @@ def verify_stock(stock: str, date: str) -> str or bool :
 
 
 def insert(*args, **kargs):
-    cursor = create_connection(FILE)
-
+    conn = create_connection(FILE)
+    cursor: sqlite3.Cursor = conn.cursor()
+    stock_id: int = 1 if 'B3SA3' in args['stock'] else 2
+    
+    is_register: bool = verify_price_stock(args['stock'], args['date'])
+    
     try:
-        query = """INSERT INTO stock
-                            (id, name, ticket, name, active) 
-                            (?, ?, ?, ?)"""
+        if not is_register:
+            insert_stock = """INSERT INTO stock
+                                (ticket, name, active) 
+                                VALUES
+                                (?, ?, ?, ?)"""
+
+            insert_price = """INSERT INTO price 
+                                (id_stock, date, price)
+                                VALUES
+                                (?, ?, ?)
+                            """
+
+            cursor.executem(insert_stock, (args['stock'], args['stock']))
+            cursor.executem(insert_price, (stock_id, args['date'], args['price']))
 
     except sqlite3.Error as e:
         print('Error in database operation: ', e)
