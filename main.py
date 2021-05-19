@@ -22,9 +22,9 @@ def get_last_week(symbol: str) -> list:
     Returns:
         list: Array contains values from last week about passed stock
     """
+    print('Fetching API')
+    last_week_values: list[dict[str, str]] = []
 
-    last_week_values: tuple[dict[str, str]] = []
-    
     ts: TimeSeries = TimeSeries(key=APIKEY, output_format='json')
     data, _ = ts.get_daily(symbol=symbol, outputsize='full')
 
@@ -33,7 +33,7 @@ def get_last_week(symbol: str) -> list:
             last_week_values.append(
                 {str(last_week + timedelta(days=i)): data[str(last_week + timedelta(days=i))]['4. close']})
         except KeyError:
-            pass
+            print('Weekend detected, skipping')
 
     return last_week_values
 
@@ -49,5 +49,5 @@ if __name__ == '__main__':
     stocks: str = ['B3SA3.SAO', 'PETR4.SAO']
     all_result = get_all_data(stocks[0])
     result = get_last_week(stocks[0])
-    
+
     print(result)
