@@ -57,19 +57,26 @@ def insert(*args, **kargs):
     
     try:
         if not is_register:
-            insert_stock = """INSERT INTO stock
+            insert_stock: str = """INSERT INTO stock
                                 (ticket, name, active) 
                                 VALUES
                                 (?, ?, ?, ?)"""
 
-            insert_price = """INSERT INTO price 
-                                (id_stock, date, price)
+            insert_price: str = """INSERT INTO price 
+                                (id_stock, value, date)
                                 VALUES
                                 (?, ?, ?)
                             """
+            cursor.execute(insert_stock, (args['stock'], 'brasil', 1))
+            cursor.execute(insert_price, (stock_id, args['date'], args['value']))
+            
+        if is_register:
+            update_price: str = """UPDATE price SET 
+                                value = ?
+                                where date = ? AND stock_id = ?
+                            """
+            cursor.execute(update_price, (args['value'], args['date'], stock_id))
 
-            cursor.executem(insert_stock, (args['stock'], args['stock']))
-            cursor.executem(insert_price, (stock_id, args['date'], args['price']))
 
     except sqlite3.Error as e:
         print('Error in database operation: ', e)
